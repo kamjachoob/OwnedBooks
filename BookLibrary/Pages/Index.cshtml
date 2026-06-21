@@ -1,10 +1,255 @@
 ﻿@page
-@model IndexModel
+@model BookLibrary.Pages.Library.IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Library Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<style>
+    .page-header {
+        background: white;
+        padding: 25px 30px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        margin-bottom: 25px;
+    }
+
+        .page-header h1 {
+            color: #2c3e50;
+            font-size: 28px;
+        }
+
+        .page-header p {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .card {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+        .card h2 {
+            color: #2c3e50;
+            font-size: 18px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 6px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #dde1e7;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+            .form-group input:focus {
+                outline: none;
+                border-color: #3498db;
+                box-shadow: 0 0 0 3px rgba(52,152,219,0.15);
+            }
+
+    .btn {
+        width: 100%;
+        padding: 11px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-borrow {
+        background: #3498db;
+        color: white;
+    }
+
+        .btn-borrow:hover {
+            background: #2980b9;
+        }
+
+    .btn-return {
+        background: #27ae60;
+        color: white;
+    }
+
+        .btn-return:hover {
+            background: #229954;
+        }
+
+    /* Borrowed books table */
+    .borrowed-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+    }
+
+        .borrowed-table th {
+            background: #f8f9fa;
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 600;
+            color: #555;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .borrowed-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #2c3e50;
+        }
+
+        .borrowed-table tr:last-child td {
+            border-bottom: none;
+        }
+
+    .badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .badge-active {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .badge-overdue {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .badge-returned {
+        background: #e2e3e5;
+        color: #383d41;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: #95a5a6;
+        font-size: 14px;
+    }
+</style>
+
+<div class="page-header">
+    <h1>📚 Library Dashboard</h1>
+    <p>Manage book borrowing and returns for your members.</p>
+</div>
+
+@* Feedback messages *@
+@if (Model.ErrorMessage is not null)
+{
+    <div class="alert alert-error">⚠️ @Model.ErrorMessage</div>
+}
+@if (Model.SuccessMessage is not null)
+{
+    <div class="alert alert-success">✅ @Model.SuccessMessage</div>
+}
+
+<div class="grid">
+    @* Borrow Form *@
+    <div class="card">
+        <h2>📥 Borrow a Book</h2>
+        <form method="post" asp-page-handler="Borrow">
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                <label asp-for="BorrowBookId">Book ID</label>
+                <input asp-for="BorrowBookId" type="number" placeholder="Enter book ID" required />
+                <span asp-validation-for="BorrowBookId" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-borrow">Borrow Book</button>
+        </form>
+    </div>
+
+    @* Return Form *@
+    <div class="card">
+        <h2>📤 Return a Book</h2>
+        <form method="post" asp-page-handler="Return">
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                <label asp-for="ReturnBookId">Book ID</label>
+                <input asp-for="ReturnBookId" type="number" placeholder="Enter book ID" required />
+                <span asp-validation-for="ReturnBookId" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-return">Return Book</button>
+        </form>
+    </div>
+</div>
+
+@* Member's Borrowed Books *@
+<div class="card">
+    <h2>📋 My Borrowed Books</h2>
+
+    @if (!Model.MemberBorrowedBooks.Any())
+    {
+        <div class="empty-state">No borrowed books found.</div>
+    }
+    else
+    {
+        <table class="borrowed-table">
+            <thead>
+                <tr>
+                    <th>Book ID</th>
+                    <th>Borrowed Date</th>
+                    <th>Return Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var record in Model.MemberBorrowedBooks)
+                {
+                    var isReturned = record.ReturnedDate.HasValue;
+                    var isOverdue = !isReturned && record.BorrowedDate.AddDays(14) < DateTime.Today;
+
+                    <tr>
+                        <td>#@record.bookId</td>
+                        <td>@record.BorrowedDate.ToString("yyyy/MM/dd")</td>
+                        <td>@(record.ReturnedDate?.ToString("yyyy/MM/dd") ?? "—")</td>
+                        <td>
+                            @if (isReturned)
+                            {
+                                <span class="badge badge-returned">Returned</span>
+                            }
+                            else if (isOverdue)
+                            {
+                                <span class="badge badge-overdue">Overdue</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-active">Active</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
 </div>

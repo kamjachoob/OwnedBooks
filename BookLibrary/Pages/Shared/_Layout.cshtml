@@ -8,45 +8,77 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/BookLibrary.styles.css" asp-append-version="true" />
+
+    <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background: #f5f7fa;
+                min-height: 100vh;
+            }
+
+            nav {
+                background: #2c3e50;
+                padding: 15px 30px;
+                display: flex;
+                align-items: center;
+                gap: 20px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            }
+
+            nav .brand {
+                color: white;
+                font-size: 20px;
+                font-weight: 700;
+                text-decoration: none;
+            }
+
+            nav a {
+                color: #bdc3c7;
+                text-decoration: none;
+                font-size: 14px;
+                transition: color 0.2s;
+            }
+
+            nav a:hover, nav a.active { color: white; }
+
+            .page-wrapper {
+                max-width: 1200px;
+                margin: 30px auto;
+                padding: 0 20px;
+            }
+
+            .alert {
+                padding: 12px 18px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+                font-size: 14px;
+                font-weight: 500;
+            }
+
+            .alert-error {
+                background: #fdecea;
+                border-left: 4px solid #e74c3c;
+                color: #721c24;
+            }
+
+            .alert-success {
+                background: #d4edda;
+                border-left: 4px solid #27ae60;
+                color: #155724;
+            }
+    </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">BookLibrary</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+    <nav>
+        <a class="brand" href="/">📚 Book Library</a>
+        <a href="/Library">Dashboard</a>
+        <a href="/Library/AllBorrowed">All Borrowed</a>
+    </nav>
+
+    <div class="page-wrapper">
+        @RenderBody()
     </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - BookLibrary - <a asp-area="" asp-page="/Privacy">Privacy</a>
-        </div>
-    </footer>
-
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-
-    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

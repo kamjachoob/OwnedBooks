@@ -34,7 +34,7 @@ public class BorrowingService(IBookRepository bookRepository, IBorrowedBookRepos
     {
         if (!ValidateBookAndMember(bookId, memberId)) throw new ArgumentException("Book or member is not available");
 
-        var borrowedBook = borrowedBookRepository.(memberId);
+        var borrowedBook = borrowedBookRepository.GetBorrowedBook(bookId, memberId);
 
         borrowedBook.ReturnedDate = DateTime.Now;
 
