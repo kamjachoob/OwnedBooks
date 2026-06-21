@@ -1,7 +1,11 @@
+using BookLibrary.Common.Settings;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
+builder.Services.Configure<BookSettings>(builder.Configuration.GetSection("BookSettings"));
 
 var app = builder.Build();
 
