@@ -14,6 +14,17 @@ var connectionString = builder.Configuration.GetConnectionString("MyDbContext") 
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
+// Add cookie authentication (simple demo login)
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme;
+})
+.AddCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+});
+
 builder.Services.AddScoped<BorrowingService>();
 
 IBookRepository bookRepo = new InMemoryBookRepository();
@@ -26,24 +37,33 @@ builder.Services.AddSingleton<IBorrowedBookRepository>(borrowRecordRepo);
 
 builder.Services.Configure<BookSettings>(builder.Configuration.GetSection("BookSettings"));
 
-// 3. Seed the data into those instances
-var book = new Book
+// Seed demo data: members and books owned by them
+var alice = new Member { Name = "Alice Johnson" };
+var bob = new Member { Name = "Bob Smith" };
+
+memberRepo.Save(alice);
+memberRepo.Save(bob);
+
+var book1 = new Book
 {
-    Id = 1,
     Title = "Clean Code",
     Author = "Robert C. Martin",
     ISBN = "978-0132350884",
     Status = BookStatus.Available,
+    OwnerId = alice.Id
 };
 
-var member = new Member
+var book2 = new Book
 {
-    Id = 1,
-    Name = "Alice Johnson"
+    Title = "The Pragmatic Programmer",
+    Author = "Andrew Hunt",
+    ISBN = "978-0201616224",
+    Status = BookStatus.Available,
+    OwnerId = bob.Id
 };
 
-bookRepo.Save(book);
-memberRepo.Save(member);
+bookRepo.Save(book1);
+bookRepo.Save(book2);
 
 var app = builder.Build();
 
@@ -56,6 +76,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();

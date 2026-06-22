@@ -1,0 +1,50 @@
+@page
+@model BookLibrary.Pages.Members.ReservationsModel
+@{
+    ViewData["Title"] = "Reservations";
+}
+
+<h1>Pending Reservations</h1>
+
+@if (Model.PendingRequests.Count == 0)
+{
+    <p>No pending requests.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Book</th>
+                <th>Requester</th>
+                <th>Requested At</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var r in Model.PendingRequests)
+            {
+                <tr>
+                    <td>@r.Book?.Title ?? ("Book #" + r.bookId)</td>
+                    <td>@r.Member?.Name ?? ("Member #" + r.memberId)</td>
+                    <td>@r.RequestDate.ToString("g")</td>
+                    <td>
+                        <form method="post" asp-page-handler="Accept">
+                            <input type="hidden" name="requestId" value="@r.Id" />
+                            <button type="submit" class="btn btn-sm btn-primary">Accept</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+    <div class="alert alert-success">@Model.SuccessMessage</div>
+}

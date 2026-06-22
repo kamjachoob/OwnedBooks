@@ -1,0 +1,23 @@
+@page
+@model BookLibrary.Pages.Account.LoginModel
+@{
+    ViewData["Title"] = "Sign in";
+}
+
+<h1>Sign in (demo)</h1>
+<form method="post">
+    <div class="form-group">
+        <label>Select member to sign in</label>
+        <select name="memberId" class="form-control">
+            <option value="">-- Select --</option>
+            @foreach(var m in Model.Members) {
+                <option value="@m.Id">@m.Name</option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary" style="margin-top:10px;">Sign in</button>
+</form>
+
+<form method="post" asp-page-handler="Logout" style="margin-top:20px;">
+    <button type="submit" class="btn btn-link">Sign out</button>
+</form>

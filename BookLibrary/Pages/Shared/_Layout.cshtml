@@ -74,7 +74,18 @@
     <nav>
         <a class="brand" href="/">📚 Book Library</a>
         <a href="/BookPages">Library</a>
-        @*<a href="/Library/AllBorrowed">All Borrowed</a> *@
+        <a href="/Members">Members</a>
+        @if (User?.Identity?.IsAuthenticated ?? false)
+        {
+            <a href="/Library/MyBorrowed">My Borrowed</a>
+            <a href="/Members/Reservations">My Reservations</a>
+            <span style="margin-left:auto; color:#ecf0f1;">Hello @User.Identity.Name</span>
+            <a href="/Account/Login" style="margin-left:10px;">Logout</a>
+        }
+        else
+        {
+            <a style="margin-left:auto;" href="/Account/Login">Sign in</a>
+        }
     </nav>
 
     <div class="page-wrapper">

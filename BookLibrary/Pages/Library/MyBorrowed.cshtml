@@ -1,0 +1,39 @@
+@page
+@model BookLibrary.Pages.Library.MyBorrowedModel
+@{
+    ViewData["Title"] = "My Borrowed Books";
+}
+
+<h1>My Borrowed Books</h1>
+
+@if (Model.Borrowed.Count == 0)
+{
+    <p>You have no borrowed books right now.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Borrowed At</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var b in Model.Borrowed)
+            {
+                <tr>
+                    <td>@b.Book?.Title ?? ("Book #" + b.bookId)</td>
+                    <td>@b.BorrowedDate?.ToString("g")</td>
+                    <td>
+                        <form method="post" asp-page="/Library/Index" asp-page-handler="Return">
+                            <input type="hidden" name="ReturnBookId" value="@b.bookId" />
+                            <button type="submit" class="btn btn-sm btn-secondary">Return</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

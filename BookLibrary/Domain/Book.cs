@@ -8,6 +8,10 @@
         public string ISBN { get; set; } = string.Empty;
         public BookStatus Status { get; set; }
 
+        // Owner of the book (the person who owns/lends it)
+        public long? OwnerId { get; set; }
+        public Member? Owner { get; set; }
+
         public ICollection<BorrowedBook> BorrowedBooks { get; set; } = new List<BorrowedBook>();
     }
 }

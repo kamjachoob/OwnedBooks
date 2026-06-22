@@ -32,6 +32,18 @@
             <span asp-validation-for="Book.ISBN" class="text-danger" style="font-size:12px;"></span>
         </div>
 
+        <div class="form-group">
+            <label class="control-label">Owner</label>
+            <select asp-for="Book.OwnerId" class="form-control">
+                <option value="">-- Select owner --</option>
+                @foreach (var m in Model.Members)
+                {
+                    <option value="@m.Id">@m.Name</option>
+                }
+            </select>
+            <span asp-validation-for="Book.OwnerId" class="text-danger" style="font-size:12px;"></span>
+        </div>
+
         <button type="submit" class="btn btn-borrow" style="margin-top:10px;">Save Book</button>
         <a asp-page="./Index" style="display:inline-block; margin-left:10px; margin-top:10px; color:#3498db; text-decoration:none;">Cancel</a>
     </form>

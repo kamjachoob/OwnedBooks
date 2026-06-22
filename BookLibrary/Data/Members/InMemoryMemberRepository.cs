@@ -22,4 +22,6 @@ public class InMemoryMemberRepository : IMemberRepository
 
         _store[member.Id] = member;
     }
+
+    public List<Member> GetAll() => _store.Values.ToList();
 }

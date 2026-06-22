@@ -1,0 +1,12 @@
+@page
+@model BookLibrary.Pages.Members.IndexModel
+@{
+    ViewData["Title"] = "Members";
+}
+
+<h1>Members</h1>
+<ul>
+@foreach(var m in Model.Members) {
+    <li><a asp-page="./Details" asp-route-id="@m.Id">@m.Name</a></li>
+}
+</ul>

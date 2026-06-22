@@ -11,4 +11,5 @@ public interface IBorrowedBookRepository
     public void SaveAll(List<BorrowedBook> borrowedBooks);
     public int GetActiveBorrowCountByMember(long memberId);
     public List<BorrowedBook> GetAllBorrowedBooks();
+    public List<BorrowedBook> GetPendingRequests();
 }

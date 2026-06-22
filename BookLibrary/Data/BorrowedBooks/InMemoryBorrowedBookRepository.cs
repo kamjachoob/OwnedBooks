@@ -9,14 +9,17 @@ public class InMemoryBorrowedBookRepository : IBorrowedBookRepository
 
     public List<BorrowedBook> GetBorrowedBooks(long memberId) => _store.Values.Where(book => book.memberId == memberId).ToList();
 
-    public BorrowedBook GetBorrowedBook(long bookId, long memberId) => _store.Values.FirstOrDefault(book => book.bookId == bookId
-        && book.memberId == memberId && book.ReturnedDate == null) ?? new BorrowedBook();
+    // Return the active borrowed record (where the book is in Borrowed state)
+    public BorrowedBook GetBorrowedBook(long bookId, long memberId) => _store.Values.FirstOrDefault(b => b.bookId == bookId
+        && b.memberId == memberId && b.Status == BorrowStatus.Borrowed) ?? new BorrowedBook();
 
     public void SaveAll(List<BorrowedBook> borrowedBooks) => borrowedBooks.ForEach(book => _store[book.Id] = book);
 
-    int IBorrowedBookRepository.GetActiveBorrowCountByMember(long memberId) => _store.Values.Count(b => b.memberId == memberId && b.ReturnedDate == null);
+    int IBorrowedBookRepository.GetActiveBorrowCountByMember(long memberId) => _store.Values.Count(b => b.memberId == memberId && b.Status == BorrowStatus.Borrowed && b.ReturnedDate == null);
 
     List<BorrowedBook> IBorrowedBookRepository.GetAllBorrowedBooks() => _store.Values.ToList();
+
+    public List<BorrowedBook> GetPendingRequests() => _store.Values.Where(b => b.Status == BorrowStatus.Requested).ToList();
 
     BorrowedBook IBorrowedBookRepository.GetById(long id)
     {

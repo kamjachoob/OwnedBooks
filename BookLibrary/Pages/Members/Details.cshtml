@@ -1,0 +1,52 @@
+@page "{id:long}"
+@model BookLibrary.Pages.Members.DetailsModel
+@{
+    ViewData["Title"] = "Member Details";
+}
+
+<h1>@Model.Member.Name</h1>
+<h3>Owned books</h3>
+@if (Model.OwnedBooks.Count == 0)
+{
+    <p>No owned books.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var b in Model.OwnedBooks)
+            {
+                <tr>
+                    <td>@b.Title</td>
+                    <td>@b.Author</td>
+                    <td>@b.Status</td>
+                    <td>
+                        <form method="post" asp-page-handler="Borrow">
+                            <input type="hidden" name="bookId" value="@b.Id" />
+                            <input type="hidden" name="ownerId" value="@Model.Member.Id" />
+                            <button type="submit" class="btn btn-sm btn-borrow">Borrow</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+    <div class="alert alert-success">@Model.SuccessMessage</div>
+}

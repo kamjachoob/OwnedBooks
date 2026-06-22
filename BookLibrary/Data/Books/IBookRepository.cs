@@ -8,4 +8,5 @@ public interface IBookRepository
     public void Save(Book book);
     public List<Book> GetAllAvailable();
     public void Delete(long id);
+    public List<Book> GetByOwner(long ownerId);
 }

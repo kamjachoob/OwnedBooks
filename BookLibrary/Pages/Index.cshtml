@@ -174,88 +174,100 @@
     <div class="alert alert-success">✅ @Model.SuccessMessage</div>
 }
 
-<div class="grid">
-    @* Borrow Form *@
-    <div class="card">
-        <h2>📥 Borrow a Book</h2>
-        <form method="post" asp-page-handler="Borrow">
-            @Html.AntiForgeryToken()
-            <div class="form-group">
-                <label asp-for="BorrowBookId">Select a Book</label>
-                <select asp-for="BorrowBookId" required>
-                    <option value="">-- Choose an available book --</option>
-                    @foreach (var book in Model.AvailableBooks)
-                    {
-                        <option value="@book.Id">@book.Title - @book.Author</option>
-                    }
-                </select>
-                <span asp-validation-for="BorrowBookId" class="text-danger"></span>
-            </div>
-            <button type="submit" class="btn btn-borrow">Borrow Book</button>
-        </form>
+@if (User?.Identity?.IsAuthenticated ?? false)
+{
+    <div class="alert alert-success">Welcome back, @User.Identity.Name! You can borrow or return books using the forms below.</div>
+
+
+    <div class="grid">
+        @* Borrow Form *@
+        <div class="card">
+            <h2>📥 Borrow a Book</h2>
+            <form method="post" asp-page-handler="Borrow">
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label asp-for="BorrowBookId">Select a Book</label>
+                    <select asp-for="BorrowBookId" required>
+                        <option value="">-- Choose an available book --</option>
+                        @foreach (var book in Model.AvailableBooks)
+                        {
+                            <option value="@book.Id">@book.Title - @book.Author</option>
+                        }
+                    </select>
+                    <span asp-validation-for="BorrowBookId" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-borrow">Borrow Book</button>
+            </form>
+        </div>
+
+        @* Return Form *@
+        <div class="card">
+            <h2>📤 Return a Book</h2>
+            <form method="post" asp-page-handler="Return">
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label asp-for="ReturnBookId">Book ID</label>
+                    <input asp-for="ReturnBookId" type="number" placeholder="Enter book ID" required />
+                    <span asp-validation-for="ReturnBookId" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-return">Return Book</button>
+            </form>
+        </div>
     </div>
 
-    @* Return Form *@
+    @* Member's Borrowed Books *@
     <div class="card">
-        <h2>📤 Return a Book</h2>
-        <form method="post" asp-page-handler="Return">
-            @Html.AntiForgeryToken()
-            <div class="form-group">
-                <label asp-for="ReturnBookId">Book ID</label>
-                <input asp-for="ReturnBookId" type="number" placeholder="Enter book ID" required />
-                <span asp-validation-for="ReturnBookId" class="text-danger"></span>
-            </div>
-            <button type="submit" class="btn btn-return">Return Book</button>
-        </form>
-    </div>
-</div>
+        <h2>📋 My Borrowed Books</h2>
 
-@* Member's Borrowed Books *@
-<div class="card">
-    <h2>📋 My Borrowed Books</h2>
-
-    @if (!Model.MemberBorrowedBooks.Any())
-    {
-        <div class="empty-state">No borrowed books found.</div>
-    }
-    else
-    {
-        <table class="borrowed-table">
-            <thead>
-                <tr>
-                    <th>Book ID</th>
-                    <th>Borrowed Date</th>
-                    <th>Return Date</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var record in Model.MemberBorrowedBooks)
-                {
-                    var isReturned = record.ReturnedDate.HasValue;
-                    var isOverdue = !isReturned && record.BorrowedDate.AddDays(14) < DateTime.Today;
-
+        @if (!Model.MemberBorrowedBooks.Any())
+        {
+            <div class="empty-state">No borrowed books found.</div>
+        }
+        else
+        {
+            <table class="borrowed-table">
+                <thead>
                     <tr>
-                        <td>#@record.bookId</td>
-                        <td>@record.BorrowedDate.ToString("yyyy/MM/dd")</td>
-                        <td>@(record.ReturnedDate?.ToString("yyyy/MM/dd") ?? "—")</td>
-                        <td>
-                            @if (isReturned)
-                            {
-                                <span class="badge badge-returned">Returned</span>
-                            }
-                            else if (isOverdue)
-                            {
-                                <span class="badge badge-overdue">Overdue</span>
-                            }
-                            else
-                            {
-                                <span class="badge badge-active">Active</span>
-                            }
-                        </td>
+                        <th>Book ID</th>
+                        <th>Borrowed Date</th>
+                        <th>Return Date</th>
+                        <th>Status</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    }
-</div>
+                </thead>
+                <tbody>
+                    @foreach (var record in Model.MemberBorrowedBooks)
+                    {
+                        var isReturned = record.ReturnedDate.HasValue;
+                        var isOverdue = !isReturned && record.BorrowedDate?.AddDays(14) < DateTime.Today;
+
+                        <tr>
+                            <td>#@record.bookId</td>
+                            <td>@record.BorrowedDate?.ToString("yyyy/MM/dd")</td>
+                            <td>@(record.ReturnedDate?.ToString("yyyy/MM/dd") ?? "—")</td>
+                            <td>
+                                @if (isReturned)
+                                {
+                                    <span class="badge badge-returned">Returned</span>
+                                }
+                                else if (isOverdue)
+                                {
+                                    <span class="badge badge-overdue">Overdue</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-active">Active</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+}
+
+
+else
+{
+    <div class="alert alert-info">Please sign in to access your borrowed books.</div>
+}
