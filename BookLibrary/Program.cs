@@ -28,7 +28,7 @@ var book = new Book
     Title = "Clean Code",
     Author = "Robert C. Martin",
     ISBN = "978-0132350884",
-    IsAvailable = true,
+    Status = BookStatus.Available,
 };
 
 var member = new Member

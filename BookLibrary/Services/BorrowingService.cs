@@ -11,7 +11,11 @@ public class BorrowingService(IBookRepository bookRepository, IBorrowedBookRepos
 {
     public void BorrowBook(long bookId, long memberId)
     {
-        if (!ValidateBookAndMember(bookId, memberId)) throw new ArgumentException("Book or member is not available");
+        var book = bookRepository.GetById(bookId);
+        if (book == null) throw new ArgumentException("Book is not available");
+
+        var member = memberRepository.GetById(memberId);
+        if (member == null) throw new ArgumentException("member is not available");
 
         var limitCount = bookSettings.Value.MaxBorrowLimit;
         var currentBorrowCount = borrowedBookRepository.GetActiveBorrowCountByMember(memberId);
@@ -20,6 +24,8 @@ public class BorrowingService(IBookRepository bookRepository, IBorrowedBookRepos
             throw new InvalidOperationException($"Member has reached the maximum borrow limit of {limitCount} books.");
         }
 
+        book.Status = BookStatus.Borrowed;
+
         var borrowBook = new BorrowedBook 
         {
             bookId = bookId,
@@ -27,17 +33,24 @@ public class BorrowingService(IBookRepository bookRepository, IBorrowedBookRepos
             BorrowedDate = DateTime.Now
         };
 
+        bookRepository.Save(book); 
         borrowedBookRepository.Save(borrowBook);
     }
 
     public void ReturnBook(long bookId, long memberId)
     {
-        if (!ValidateBookAndMember(bookId, memberId)) throw new ArgumentException("Book or member is not available");
+        var book = bookRepository.GetById(bookId);
+        if (book == null) throw new ArgumentException("Book is not available");
+
+        var member = memberRepository.GetById(memberId);
+        if (member == null) throw new ArgumentException("member is not available");
 
         var borrowedBook = borrowedBookRepository.GetBorrowedBook(bookId, memberId);
 
         borrowedBook.ReturnedDate = DateTime.Now;
+        book.Status = BookStatus.Available;
 
+        bookRepository.Save(book);
         borrowedBookRepository.Save(borrowedBook);
     }
 
@@ -61,14 +74,5 @@ public class BorrowingService(IBookRepository bookRepository, IBorrowedBookRepos
         return isOverDue;
     }
 
-    private bool ValidateBookAndMember(long bookId, long memberId) 
-    {
-        var book = bookRepository.GetById(bookId);
-        if (book == null) return false;
-
-        var member = memberRepository.GetById(memberId);
-        if (member == null) return false;
-
-        return true;
-    }
+    public List<Book> GetAvailableBooks() => bookRepository.GetAllAvailable();
 }

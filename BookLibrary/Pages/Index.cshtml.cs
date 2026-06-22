@@ -9,6 +9,7 @@ public class IndexModel(BorrowingService borrowingService) : PageModel
 {
     // -- Displayed data --
     public List<BorrowedBook> MemberBorrowedBooks { get; set; } = [];
+    public List<Book> AvailableBooks { get; set; } = [];
 
     // -- Form inputs --
     [BindProperty] public long BorrowBookId { get; set; }
@@ -62,5 +63,6 @@ public class IndexModel(BorrowingService borrowingService) : PageModel
     private void LoadMemberData()
     {
         MemberBorrowedBooks = borrowingService.GetMemberBorrowedBooks(CurrentMemberId);
+        AvailableBooks = borrowingService.GetAvailableBooks();
     }
 }
