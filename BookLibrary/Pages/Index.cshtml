@@ -196,6 +196,7 @@
                     </select>
                     <span asp-validation-for="BorrowBookId" class="text-danger"></span>
                 </div>
+
                 <button type="submit" class="btn btn-borrow">Borrow Book</button>
             </form>
         </div>
@@ -245,7 +246,7 @@
                             <td>@record.BorrowedDate?.ToString("yyyy/MM/dd")</td>
                             <td>@(record.ReturnedDate?.ToString("yyyy/MM/dd") ?? "—")</td>
                             <td>
-                                @if (isReturned)
+                                @* @if (isReturned)
                                 {
                                     <span class="badge badge-returned">Returned</span>
                                 }
@@ -256,7 +257,9 @@
                                 else
                                 {
                                     <span class="badge badge-active">Active</span>
-                                }
+                                } *@
+
+                                @record.Status
                             </td>
                         </tr>
                     }

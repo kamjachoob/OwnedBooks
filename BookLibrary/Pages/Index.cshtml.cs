@@ -12,16 +12,23 @@ public class IndexModel(BorrowingService borrowingService) : PageModel
     public List<Book> AvailableBooks { get; set; } = [];
 
     // -- Form inputs --
+    // These will automatically catch the data sent from the HTML forms
     [BindProperty] public long BorrowBookId { get; set; }
     [BindProperty] public long ReturnBookId { get; set; }
-    [BindProperty] public long MemberId { get; set; }
 
     // -- Feedback --
     public string? ErrorMessage { get; set; }
     public string? SuccessMessage { get; set; }
 
-    // Hardcoded for demo — replace with session/auth user later
-    private const long CurrentMemberId = 1;
+    // Helper method to get the logged-in user's ID
+    private long GetCurrentMemberId()
+    {
+        var idClaim = User.FindFirst("MemberId")?.Value;
+        if (long.TryParse(idClaim, out var id)) return id;
+
+        // Fallback for testing if not logged in yet
+        return 1;
+    }
 
     public void OnGet()
     {
@@ -32,8 +39,11 @@ public class IndexModel(BorrowingService borrowingService) : PageModel
     {
         try
         {
-            borrowingService.BorrowBook(BorrowBookId, CurrentMemberId);
-            SuccessMessage = "Book borrowed successfully.";
+            var currentMemberId = GetCurrentMemberId();
+
+            borrowingService.RequestBorrow(BorrowBookId, currentMemberId);
+
+            SuccessMessage = "Borrow request submitted.";
         }
         catch (Exception ex)
         {
@@ -48,7 +58,10 @@ public class IndexModel(BorrowingService borrowingService) : PageModel
     {
         try
         {
-            borrowingService.ReturnBook(ReturnBookId, CurrentMemberId);
+            var currentMemberId = GetCurrentMemberId();
+
+            borrowingService.ReturnBook(ReturnBookId, currentMemberId);
+
             SuccessMessage = "Book returned successfully.";
         }
         catch (Exception ex)
@@ -62,7 +75,7 @@ public class IndexModel(BorrowingService borrowingService) : PageModel
 
     private void LoadMemberData()
     {
-        MemberBorrowedBooks = borrowingService.GetMemberBorrowedBooks(CurrentMemberId);
+        MemberBorrowedBooks = borrowingService.GetMemberBorrowedBooks(GetCurrentMemberId());
         AvailableBooks = borrowingService.GetAvailableBooks();
     }
 }
