@@ -1,0 +1,44 @@
+@page
+@model BookLibrary.Pages.MyBooks.IndexModel
+@{
+    ViewData["Title"] = "My Books";
+}
+
+<h1>My Books</h1>
+
+<p><a class="btn btn-primary" href="/MyBooks/Create">Add New Book</a></p>
+
+@if (Model.MyBooks.Count == 0)
+{
+    <p>You don't have any books yet.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>ISBN</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var b in Model.MyBooks)
+            {
+                <tr>
+                    <td>@b.Title</td>
+                    <td>@b.Author</td>
+                    <td>@b.ISBN</td>
+                    <td>@b.Status</td>
+                    <td>
+                        <a class="btn btn-sm btn-secondary" href="/MyBooks/Edit?id=@b.Id">Edit</a>
+                        <a class="btn btn-sm btn-info" href="/BookPages/Details?id=@b.Id">Details</a>
+                        <a class="btn btn-sm btn-danger" href="/MyBooks/Delete?id=@b.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

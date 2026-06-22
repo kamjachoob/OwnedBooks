@@ -1,0 +1,30 @@
+@page
+@model BookLibrary.Pages.MyBooks.DeleteModel
+@{
+    ViewData["Title"] = "Delete My Book";
+}
+
+<h1>Delete Book</h1>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
+
+@if (Model.Book == null)
+{
+    <p>Book not found.</p>
+}
+else
+{
+    <div class="card" style="max-width:600px;">
+        <div class="card-body">
+            <h5 class="card-title">@Model.Book.Title</h5>
+            <p class="card-text">@Model.Book.Author</p>
+            <form method="post">
+                <button type="submit" class="btn btn-danger">Delete</button>
+                <a asp-page="./Index" class="btn btn-link">Cancel</a>
+            </form>
+        </div>
+    </div>
+}

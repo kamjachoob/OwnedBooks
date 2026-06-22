@@ -26,6 +26,8 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddScoped<BorrowingService>();
+builder.Services.AddScoped<MyBooksService>();
+
 
 IBookRepository bookRepo = new InMemoryBookRepository();
 IMemberRepository memberRepo = new InMemoryMemberRepository();
