@@ -1,11 +1,16 @@
 using BookLibrary.Common.Settings;
+using BookLibrary.Data;
 using BookLibrary.Data.Books;
 using BookLibrary.Data.BorrowedBooks;
 using BookLibrary.Data.Members;
 using BookLibrary.Domain;
 using BookLibrary.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("MyDbContext") ?? throw new InvalidOperationException("Connection string 'MyDbContext' not found.");
+
+//builder.Services.AddDbContext<MyDbContext>(options => options.UseSqlServer(connectionString));
 
 // Add services to the container.
 builder.Services.AddRazorPages();

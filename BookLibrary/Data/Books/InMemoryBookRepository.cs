@@ -24,4 +24,7 @@ public class InMemoryBookRepository : IBookRepository
 
         _store[book.Id] = book;
     }
+
+    public void Delete(long id)
+        { _store.Remove(id); }
 }

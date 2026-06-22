@@ -73,12 +73,17 @@
 <body>
     <nav>
         <a class="brand" href="/">📚 Book Library</a>
-        <a href="/Library">Dashboard</a>
-        <a href="/Library/AllBorrowed">All Borrowed</a>
+        <a href="/BookPages">Library</a>
+        @*<a href="/Library/AllBorrowed">All Borrowed</a> *@
     </nav>
 
     <div class="page-wrapper">
         @RenderBody()
     </div>
+
+    @await RenderSectionAsync("Scripts", required: false);
+
 </body>
+
+
 </html>
