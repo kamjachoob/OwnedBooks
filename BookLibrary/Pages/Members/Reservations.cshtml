@@ -25,8 +25,8 @@ else
             @foreach (var r in Model.PendingRequests)
             {
                 <tr>
-                    <td>@r.Book?.Title ?? ("Book #" + r.bookId)</td>
-                    <td>@r.Member?.Name ?? ("Member #" + r.memberId)</td>
+                    <td>@r.Book?.Title</td>
+                    <td>@r.Member?.Name</td>
                     <td>@r.RequestDate.ToString("g")</td>
                     <td>
                         <form method="post" asp-page-handler="Accept">

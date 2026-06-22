@@ -24,7 +24,7 @@ else
             @foreach (var b in Model.Borrowed)
             {
                 <tr>
-                    <td>@b.Book?.Title ?? ("Book #" + b.bookId)</td>
+                    <td>@b.Book?.Title</td>
                     <td>@b.BorrowedDate?.ToString("g")</td>
                     <td>
                         <form method="post" asp-page="/Library/Index" asp-page-handler="Return">
